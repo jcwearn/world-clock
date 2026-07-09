@@ -1,0 +1,21 @@
+# Node
+node_modules/
+dist/
+*.local
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Editors
+.vscode/
+.idea/
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test output
+coverage/
