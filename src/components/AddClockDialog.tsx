@@ -43,7 +43,7 @@ export function AddClockDialog({ onAdd }: AddClockDialogProps) {
             {options.map((option) => (
               <CommandItem
                 key={option.id}
-                value={`${option.label} ${option.id}`}
+                value={option.search}
                 onSelect={() => {
                   onAdd(option.id)
                   setOpen(false)
