@@ -5,8 +5,8 @@
 | Phase | Status | Updated | Notes |
 |-------|--------|---------|-------|
 | 1. App + packaging | Complete | 2026-07-09 | PR #1 open with release:minor; tests/lint/build/docker smoke all green |
-| 2. Deployment (k3s-cluster) | Not Started | — | Blocked on PR #1 merge + first image publish (needs image digest) |
+| 2. Deployment (k3s-cluster) | Complete | 2026-07-09 | k3s-cluster PR #659 open (manifests, CoreDNS rewrite, mkdocs page) |
 
 ## Handoff Notes
-- Phase 2 needs the `v0.1.0` image digest from ghcr.io/jcwearn/world-clock after the release workflow runs; pin it in `apps/world-clock/deployment.yaml` in the k3s-cluster repo.
-- Release labels (`release:major|minor|patch`) must exist on the GitHub repo; PR #1 should carry `release:minor`.
+- Merge order: world-clock PR #1 first (its merge publishes the v0.1.0 image via the release workflow), then k3s-cluster PR #659. Renovate pins the image digest on its next run.
+- Release labels (`release:major|minor|patch`) exist on the repo; PR #1 carries `release:minor`.
