@@ -149,7 +149,11 @@ export function ClockCard({
               {formatTime(instant, clock.timezone, hourFormat)}
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-64 space-y-3">
+          <PopoverContent
+            className="w-64 max-w-[calc(100vw-2rem)] space-y-3"
+            collisionPadding={16}
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
             <p className="text-sm font-medium">
               What if it were this time in {clock.label}?
             </p>
@@ -158,6 +162,7 @@ export function ClockCard({
               <Input
                 id={`date-${clock.id}`}
                 type="date"
+                className="min-w-0 appearance-none"
                 value={editDate}
                 onChange={(e) => setEditDate(e.target.value)}
               />
@@ -167,6 +172,7 @@ export function ClockCard({
               <Input
                 id={`time-${clock.id}`}
                 type="time"
+                className="min-w-0 appearance-none"
                 value={editTime}
                 onChange={(e) => setEditTime(e.target.value)}
               />
