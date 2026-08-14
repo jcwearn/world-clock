@@ -42,4 +42,4 @@ jobs:
       # apps/world-clock/deployment.yaml. Dropping the v would leave Renovate
       # with nothing matching to upgrade -- a silent stall rather than a
       # failure. Drop the shim only if that pin is rewritten at the same time.
-      image-tag-prefix: "v"
+      image-tag-prefix: 'v'
