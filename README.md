@@ -48,7 +48,7 @@ nginx serves it as an inert text file. No `_redirects` file is needed — Pages 
 serves `index.html` for unmatched paths, matching `try_files ... /index.html` in nginx.
 
 Preview the real edge runtime locally (`npm run preview` uses Vite and ignores
-`_headers`/`_redirects`):
+`_headers`):
 
 ```sh
 make cf-preview   # wrangler pages dev
