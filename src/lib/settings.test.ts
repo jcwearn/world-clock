@@ -56,23 +56,15 @@ describe('loadSettings', () => {
 
   it('falls back to defaults on valid JSON with the wrong shape', () => {
     expect(loadSettings(memoryStorage('42'), 'UTC').clocks).toHaveLength(1)
-    expect(
-      loadSettings(memoryStorage('{"clocks":"nope"}'), 'UTC').clocks,
-    ).toHaveLength(1)
+    expect(loadSettings(memoryStorage('{"clocks":"nope"}'), 'UTC').clocks).toHaveLength(1)
   })
 
   it('drops clocks with invalid timezones and keeps the rest', () => {
     const stored: Settings = {
-      clocks: [
-        newClock('America/New_York'),
-        { id: 'x', label: 'Broken', timezone: 'Not/A_Zone' },
-      ],
+      clocks: [newClock('America/New_York'), { id: 'x', label: 'Broken', timezone: 'Not/A_Zone' }],
       hourFormat: 12,
     }
-    const settings = loadSettings(
-      memoryStorage(JSON.stringify(stored)),
-      'UTC',
-    )
+    const settings = loadSettings(memoryStorage(JSON.stringify(stored)), 'UTC')
     expect(settings.clocks).toHaveLength(1)
     expect(settings.clocks[0].timezone).toBe('America/New_York')
   })

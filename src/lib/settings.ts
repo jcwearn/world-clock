@@ -51,9 +51,7 @@ export function loadSettings(storage: StorageLike, zone?: string): Settings {
     if (typeof parsed !== 'object' || parsed === null) return defaultSettings(zone)
     const { clocks, hourFormat } = parsed as Record<string, unknown>
     if (!Array.isArray(clocks)) return defaultSettings(zone)
-    const valid = clocks
-      .map(parseClock)
-      .filter((clock): clock is ClockConfig => clock !== null)
+    const valid = clocks.map(parseClock).filter((clock): clock is ClockConfig => clock !== null)
     if (valid.length === 0) return defaultSettings(zone)
     return { clocks: valid, hourFormat: hourFormat === 24 ? 24 : 12 }
   } catch {
