@@ -10,7 +10,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "preview:cf": "wrangler pages dev",
+    "deploy:cf": "npm run build && wrangler pages deploy"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.19",
@@ -39,6 +41,7 @@
     "tailwindcss": "4.3.3",
     "typescript": "7.0.2",
     "vite": "8.2.1",
-    "vitest": "4.1.10"
+    "vitest": "4.1.10",
+    "wrangler": "4.123.0"
   }
 }

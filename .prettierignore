@@ -4,6 +4,5 @@ package-lock.json
 # Archival records of shipped work, kept as written.
 docs/plans/
 
-# Local wrangler state. Untracked but not gitignored, so Prettier would
-# otherwise walk into it.
+# Build output and local tooling state.
 .wrangler/
