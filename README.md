@@ -30,6 +30,15 @@ backend, no env vars, and no per-target build.
 `release.yml` publishes `ghcr.io/jcwearn/world-clock` on merge to `main`. Kubernetes
 manifests live in the `k3s-cluster` repo under `apps/world-clock/`.
 
+Put exactly one of `release:major` / `release:minor` / `release:patch` / `release:skip`
+on the PR. The release itself is delegated to
+[jcwearn/workflows](https://github.com/jcwearn/workflows), which builds and pushes the
+image **before** creating the tag or GitHub Release — so a failed build never leaves a
+version pointing at an image that does not exist. `release:skip` publishes nothing.
+
+Published tags: `vX.Y.Z` (immutable), `vX.Y` and `vX` (both move to the newest release
+in their series), and `sha-<short>`.
+
 ### Cloudflare Pages
 
 Deployed via Cloudflare's Git integration — pushes to `main` publish to production,
