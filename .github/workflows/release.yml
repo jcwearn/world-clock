@@ -1,102 +1,45 @@
 name: Release
 
+# Calls the shared release workflow in jcwearn/workflows, replacing the third
+# hand-rolled copy of the same idea.
+#
+# The copy this replaces created the git tag BEFORE building the image, in a
+# single job, with the GitHub Release created last. A failed build would have
+# left a pushed tag with neither an image nor a Release behind it. That is not
+# hypothetical: ansible-runner ran the same ordering and produced v0.1.29
+# through v0.1.35 -- seven tags and Releases with no images, unnoticed for a
+# month. Every one of this repo's 20 tags does have an image, so it has been
+# lucky rather than correct.
+#
+# The shared workflow puts publish behind `needs: build`, inside the reusable
+# workflow, so a caller cannot rewire it. A failed build now leaves an image
+# with no tag, which a retry overwrites from the same source.
+#
+# move-major-tag is left off (the default). This repo's artifact is the
+# container image and Kubernetes pins image tags, so a moving git tag would be
+# created and never read. The moving IMAGE tags are unaffected.
+
 on:
   pull_request:
     types: [closed]
     branches: [main]
 
-permissions:
-  contents: write
-  packages: write
-
 jobs:
   release:
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 0
-
-      - name: Determine bump type
-        id: bump
-        env:
-          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
-        run: |
-          if echo "$LABELS" | grep -q '"release:major"'; then
-            echo "type=major" >> "$GITHUB_OUTPUT"
-          elif echo "$LABELS" | grep -q '"release:minor"'; then
-            echo "type=minor" >> "$GITHUB_OUTPUT"
-          elif echo "$LABELS" | grep -q '"release:patch"'; then
-            echo "type=patch" >> "$GITHUB_OUTPUT"
-          else
-            echo "::error::No release label found on merged PR"
-            exit 1
-          fi
-
-      - name: Compute next version
-        id: version
-        run: |
-          LATEST=$(git tag --list 'v*' --sort=-v:refname | head -n1)
-          if [ -z "$LATEST" ]; then
-            LATEST="v0.0.0"
-          fi
-
-          # Strip leading v
-          VERSION=${LATEST#v}
-          MAJOR=$(echo "$VERSION" | cut -d. -f1)
-          MINOR=$(echo "$VERSION" | cut -d. -f2)
-          PATCH=$(echo "$VERSION" | cut -d. -f3)
-
-          case "${{ steps.bump.outputs.type }}" in
-            major)
-              MAJOR=$((MAJOR + 1))
-              MINOR=0
-              PATCH=0
-              ;;
-            minor)
-              MINOR=$((MINOR + 1))
-              PATCH=0
-              ;;
-            patch)
-              PATCH=$((PATCH + 1))
-              ;;
-          esac
-
-          NEXT="v${MAJOR}.${MINOR}.${PATCH}"
-          echo "tag=$NEXT" >> "$GITHUB_OUTPUT"
-          echo "major_minor=v${MAJOR}.${MINOR}" >> "$GITHUB_OUTPUT"
-          echo "Next version: $NEXT"
-
-      - name: Create git tag
-        run: |
-          git tag "${{ steps.version.outputs.tag }}"
-          git push origin "${{ steps.version.outputs.tag }}"
-
-      - uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4
-
-      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push image
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7
-        with:
-          context: .
-          push: true
-          tags: |
-            ghcr.io/jcwearn/world-clock:${{ steps.version.outputs.tag }}
-            ghcr.io/jcwearn/world-clock:${{ steps.version.outputs.major_minor }}
-            ghcr.io/jcwearn/world-clock:sha-${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max,ignore-error=true
-
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "${{ steps.version.outputs.tag }}" \
-            --title "${{ steps.version.outputs.tag }}" \
-            --generate-notes
+    # Both scopes are required, and packages: write is not optional just
+    # because the build might be skipped: nested-job permissions are validated
+    # statically, before any `if:` runs. Omitting it makes the workflow fail to
+    # parse rather than fail at the push.
+    permissions:
+      contents: write # git tag + GitHub Release
+      packages: write # push to GHCR
+    uses: jcwearn/workflows/.github/workflows/release.yaml@v1
+    with:
+      image: ghcr.io/jcwearn/world-clock
+      # Docker convention is no prefix, but this repo has always published
+      # vX.Y.Z and k3s-cluster pins `:v0.2.12@sha256:...` by string in
+      # apps/world-clock/deployment.yaml. Dropping the v would leave Renovate
+      # with nothing matching to upgrade -- a silent stall rather than a
+      # failure. Drop the shim only if that pin is rewritten at the same time.
+      image-tag-prefix: 'v'
