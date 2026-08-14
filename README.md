@@ -35,12 +35,12 @@ manifests live in the `k3s-cluster` repo under `apps/world-clock/`.
 Deployed via Cloudflare's Git integration — pushes to `main` publish to production,
 pull requests get preview deployments. Project settings:
 
-| Setting | Value |
-| --- | --- |
-| Build command | `npm run build` |
+| Setting          | Value                                 |
+| ---------------- | ------------------------------------- |
+| Build command    | `npm run build`                       |
 | Output directory | `dist` (also set in `wrangler.jsonc`) |
-| Root directory | `/` |
-| Node version | from `.nvmrc` |
+| Root directory   | `/`                                   |
+| Node version     | from `.nvmrc`                         |
 
 `public/_headers` is copied into `dist/` by Vite and sets the same caching and security
 headers `nginx.conf` sets, so both targets behave the same. Pages consumes it as config;
