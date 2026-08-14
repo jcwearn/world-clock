@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
     "lint": "oxlint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
+    "test:watch": "vitest",
     "preview": "vite preview",
     "preview:cf": "wrangler pages dev",
     "deploy:cf": "npm run build && wrangler pages deploy"
