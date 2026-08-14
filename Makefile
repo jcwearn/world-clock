@@ -1,4 +1,4 @@
-.PHONY: dev build test lint docker-build docker-push
+.PHONY: dev build test lint docker-build docker-push cf-preview cf-deploy
 
 IMAGE ?= world-clock
 
@@ -19,3 +19,9 @@ docker-build:
 
 docker-push:
 	docker push $(IMAGE)
+
+cf-preview:
+	npm run preview:cf
+
+cf-deploy:
+	npm run deploy:cf
