@@ -5,17 +5,10 @@ import { PinnedBanner } from '@/components/PinnedBanner'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { useNow } from '@/hooks/useNow'
-import {
-  loadSettings,
-  newClock,
-  saveSettings,
-  type Settings,
-} from '@/lib/settings'
+import { loadSettings, newClock, saveSettings, type Settings } from '@/lib/settings'
 
 function App() {
-  const [settings, setSettings] = useState<Settings>(() =>
-    loadSettings(window.localStorage),
-  )
+  const [settings, setSettings] = useState<Settings>(() => loadSettings(window.localStorage))
   const [pinnedInstant, setPinnedInstant] = useState<number | null>(null)
   const now = useNow()
   const instant = pinnedInstant ?? now
@@ -39,9 +32,7 @@ function App() {
   const renameClock = (id: string, label: string) => {
     update({
       ...settings,
-      clocks: settings.clocks.map((clock) =>
-        clock.id === id ? { ...clock, label } : clock,
-      ),
+      clocks: settings.clocks.map((clock) => (clock.id === id ? { ...clock, label } : clock)),
     })
   }
 
@@ -63,9 +54,7 @@ function App() {
             <Switch
               id="hour-format"
               checked={settings.hourFormat === 24}
-              onCheckedChange={(checked) =>
-                update({ ...settings, hourFormat: checked ? 24 : 12 })
-              }
+              onCheckedChange={(checked) => update({ ...settings, hourFormat: checked ? 24 : 12 })}
             />
             <Label htmlFor="hour-format">24-hour</Label>
           </div>
@@ -73,9 +62,7 @@ function App() {
         </div>
       </header>
 
-      {pinnedInstant !== null && (
-        <PinnedBanner onBackToLive={() => setPinnedInstant(null)} />
-      )}
+      {pinnedInstant !== null && <PinnedBanner onBackToLive={() => setPinnedInstant(null)} />}
 
       <main className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {settings.clocks.map((clock, index) => (

@@ -1,19 +1,10 @@
 import { useState } from 'react'
 import { ChevronLeft, ChevronRight, Pencil, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import type { ClockConfig } from '@/lib/settings'
 import {
   formatDate,
@@ -154,9 +145,7 @@ export function ClockCard({
             collisionPadding={16}
             onOpenAutoFocus={(e) => e.preventDefault()}
           >
-            <p className="text-sm font-medium">
-              What if it were this time in {clock.label}?
-            </p>
+            <p className="text-sm font-medium">What if it were this time in {clock.label}?</p>
             <div className="space-y-1.5">
               <Label htmlFor={`date-${clock.id}`}>Date</Label>
               <Input
@@ -182,9 +171,7 @@ export function ClockCard({
             </Button>
           </PopoverContent>
         </Popover>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {formatDate(instant, clock.timezone)}
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">{formatDate(instant, clock.timezone)}</p>
       </CardContent>
       <CardFooter className="text-xs text-muted-foreground">
         {clock.timezone} · {zoneAbbreviation(instant, clock.timezone)} (
