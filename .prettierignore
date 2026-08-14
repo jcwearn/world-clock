@@ -3,3 +3,6 @@ package-lock.json
 
 # Archival records of shipped work, kept as written.
 docs/plans/
+
+# Build output and local tooling state.
+.wrangler/

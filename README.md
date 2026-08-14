@@ -40,7 +40,7 @@ pull requests get preview deployments. Project settings:
 | Build command    | `npm run build`                       |
 | Output directory | `dist` (also set in `wrangler.jsonc`) |
 | Root directory   | `/`                                   |
-| Node version     | from `.nvmrc`                         |
+| Node version     | from `.node-version`                  |
 
 `public/_headers` is copied into `dist/` by Vite and sets the same caching and security
 headers `nginx.conf` sets, so both targets behave the same. Pages consumes it as config;
