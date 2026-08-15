@@ -1,0 +1,32 @@
+name: CI
+
+# Calls the shared Node CI workflow in jcwearn/workflows, replacing lint.yml
+# and test.yml. Those two split six steps across two jobs that both paid for
+# their own checkout and npm ci, and between them they still ran no lint on
+# main -- both were pull_request-only.
+#
+# The lockfile-drift check that lived in test.yml is not lost. It was promoted
+# into the shared workflow, so every Node repo now runs it rather than only the
+# one that thought of it. It catches what `npm ci` cannot: a lockfile that
+# satisfies package.json but is not what `npm install` would write.
+#
+# `push: [main]` is new here. Nothing was watching main before -- the release
+# run's image build was the closest thing, and it does not lint or typecheck.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ci:
+    # Explicit even though `read` is all node-ci needs and all this account
+    # grants by default. A reusable workflow can only narrow what the caller
+    # granted, so the grant belongs here where it is visible.
+    permissions:
+      contents: read
+    # Renovate pins this to a digest on its next run, leaving `# v1` behind as
+    # the record of what to follow. Written as `@v1` with no trailing comment;
+    # the comment belongs on a digest, where it records which tag it came from.
+    uses: jcwearn/workflows/.github/workflows/node-ci.yaml@v1
