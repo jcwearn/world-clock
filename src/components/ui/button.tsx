@@ -45,4 +45,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 )
 Button.displayName = 'Button'
 
-export { Button, buttonVariants }
+// buttonVariants is deliberately not exported. shadcn's generator emits it as a
+// named export so consumers can style a link like a button, but nothing in this
+// repo imports it -- it was dead API surface, and exporting a non-component
+// beside a component breaks fast refresh (react/only-export-components).
+//
+// If something does need it, move the cva() call to its own module rather than
+// re-adding it here; a `shadcn add button` will reinstate the combined export
+// and reintroduce the lint error.
+export { Button }
