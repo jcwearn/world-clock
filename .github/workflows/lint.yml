@@ -23,4 +23,4 @@ jobs:
 
       - run: npm run lint
 
-      - run: npx tsc -b
+      - run: npm run typecheck
