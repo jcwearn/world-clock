@@ -1,0 +1,43 @@
+name: Deploy
+
+# Deploys to Cloudflare Pages with this repo's own scoped API token, replacing
+# Cloudflare's dashboard Git integration -- which authenticates through a single
+# account-level GitHub App shared by every repo and cannot be split per app.
+#
+# Deliberately NOT wired to `push` yet. The cutover has an order, and doing it
+# in one commit means a window where either both deploy paths race or neither
+# runs:
+#
+#   1. Merge this, dispatch it from a branch, confirm the preview URL works.
+#   2. Dispatch from main, confirm production.
+#   3. In the dashboard: Build > Branch control > turn OFF automatic production
+#      AND preview deployments.
+#   4. Only then add the `push` trigger below.
+#
+# Step 4 before 3 double-deploys every push, with two builds racing to publish
+# and whichever lands second winning. Step 3 without 4 leaves the site with no
+# deploy path at all.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  deploy:
+    # The Pages PROJECT name, which is not always the repo name -- here they
+    # match, but the pages.dev subdomain does NOT: previews land at
+    # <branch>.world-clock-8mv.pages.dev, because world-clock.pages.dev was
+    # taken when the project was created.
+    #
+    # Getting project-name wrong does not fail. `wrangler pages deploy` CREATES
+    # a project that does not exist, so a typo yields a second empty project
+    # while the real site silently stops updating.
+    uses: jcwearn/workflows/.github/workflows/cloudflare-pages-deploy.yaml@v1
+    with:
+      project-name: world-clock
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
