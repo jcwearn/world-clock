@@ -4,21 +4,23 @@ name: Deploy
 # Cloudflare's dashboard Git integration -- which authenticates through a single
 # account-level GitHub App shared by every repo and cannot be split per app.
 #
-# Deliberately NOT wired to `push` yet. The cutover has an order, and doing it
-# in one commit means a window where either both deploy paths race or neither
-# runs:
+# Triggers on push to ANY branch, which is what Cloudflare's Git integration
+# did: a branch pushed without a PR still got a preview. --branch decides the
+# rest -- equal to the production branch it deploys production, anything else
+# becomes a preview at <branch>.world-clock-8mv.pages.dev.
 #
-#   1. Merge this, dispatch it from a branch, confirm the preview URL works.
-#   2. Dispatch from main, confirm production.
-#   3. In the dashboard: Build > Branch control > turn OFF automatic production
-#      AND preview deployments.
-#   4. Only then add the `push` trigger below.
+# Automatic deployments are now OFF in the dashboard (Build > Branch control),
+# which is what stops this from racing Cloudflare's own builder. Both were
+# verified by dispatch before that was switched off, in that order: enabling
+# push first would have double-deployed every commit, and switching the
+# dashboard off first would have left the site with no deploy path.
 #
-# Step 4 before 3 double-deploys every push, with two builds racing to publish
-# and whichever lands second winning. Step 3 without 4 leaves the site with no
-# deploy path at all.
+# The Git connection itself is deliberately still attached. It is not what was
+# triggering builds, and pages.tf declares the `source` block -- disconnecting
+# without changing that would drift, and the next apply would reconnect it.
 
 on:
+  push:
   workflow_dispatch:
 
 permissions:
