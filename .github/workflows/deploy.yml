@@ -37,7 +37,7 @@ jobs:
     # Getting project-name wrong does not fail. `wrangler pages deploy` CREATES
     # a project that does not exist, so a typo yields a second empty project
     # while the real site silently stops updating.
-    uses: jcwearn/workflows/.github/workflows/cloudflare-pages-deploy.yaml@16caf1d15aa256795a280d636614396888b1e13b # v1.8.12
+    uses: jcwearn/workflows/.github/workflows/cloudflare-pages-deploy.yaml@176eacdd90dc808846cb58ab564ad4cedfdc1e0c # v1.8.13
     with:
       project-name: world-clock
     secrets:
